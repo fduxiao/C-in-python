@@ -7,10 +7,33 @@ def unavailable(err_type, *args, **kwargs):
 
 
 def instruction(func):
+    """
+    Calling the `instruction` decorated method of VM
+    will yield a `future` of the execution of the instruction,
+    which will be executed with packed args passed from the caller
+    when run with `next` method.
+    In this manner, we can define the virtual machine instruction
+    directly (no need to decided which instruction it is) and
+    put them assembly into CS(Code Segment), which is convenient
+
+    :param func: VM instance
+    :return: a
+    """
+
     @wraps(func)
     def instruction_constructor(self, *args, **kwargs):
+        """
+
+        :param self: VM instance
+        :param args:
+        :param kwargs:
+        :return:
+        """
         # here self, *args, **kwargs will be passed to func
-        return lambda: func(self, *args, **kwargs)
+        @wraps(func)
+        def calling():
+            return func(self, *args, **kwargs)
+        return calling
     return instruction_constructor
 
 
